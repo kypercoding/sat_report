@@ -82,6 +82,13 @@ def delete_sat_record(list_view, db_url, window):
     if list_view.currentItem() is None:
         return
 
+    # confirmation screen
+    response = QMessageBox.question(window, 'Warning!', "Are you sure you want to delete?", QMessageBox.Yes | QMessageBox.No)
+
+    if response == QMessageBox.No:
+        return
+
+
     item = list_view.currentItem()
     date = item.text().split(" | ")[0]
 
