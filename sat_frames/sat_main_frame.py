@@ -17,7 +17,7 @@ class SATMainFrame:
         label_str = """
         Below is a list of the options:
         - Add SAT --> adds SAT practice test to student record
-        - Delete SAT --> deletes SAT practice test from student record
+        - View and Delete SAT --> views and deletes SAT practice test from student record
         - View Progress --> creates simple graphs that track student progress
         """
         
@@ -25,7 +25,7 @@ class SATMainFrame:
         label.setAlignment(Qt.AlignCenter)
 
         add_button = QPushButton("Add SAT")
-        delete_button = QPushButton("Delete SAT Records")
+        delete_button = QPushButton("View/Delete SAT Records")
         view_button = QPushButton("View Progress")
         return_button = QPushButton("Return to Main Menu")
 

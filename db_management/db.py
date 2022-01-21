@@ -166,6 +166,65 @@ def get_sat_data(database_url, window):
         QMessageBox.about(window, "Error!", "An unknown error has occurred!")
 
 
+def get_sat(database_url, window, date_time):
+    try:
+        stmt = """
+        SELECT * FROM sat_tests
+        WHERE datetime = ?;
+        """
+
+        with connect(database_url, uri=True) as connection:
+            with closing(connection.cursor()) as cursor:
+                cursor.execute(stmt, [date_time])
+
+                row = cursor.fetchone()
+
+                data_dict = {
+                    'dates': None,
+                    'composite': None,
+                    'ebrw': None,
+                    'math': None,
+                    'hoa': None,
+                    'psda': None,
+                    'pam': None,
+                    'eoi': None,
+                    'sec': None,
+                    'wic': None,
+                    'coe': None
+                }
+
+                if row is not None:
+                    datetime = str(row[0])
+                    composite = int(row[1])
+                    ebrw = int(row[2])
+                    math = int(row[3])
+                    hoa = int(row[4])
+                    psda = int(row[5])
+                    pam = int(row[6])
+                    eoi = int(row[7])
+                    sec = int(row[8])
+                    wic = int(row[9])
+                    coe = int(row[10])
+
+                    data_dict['dates'] = datetime
+                    data_dict['composite'] = composite
+                    data_dict['ebrw'] = ebrw
+                    data_dict['math'] = math
+                    data_dict['hoa'] = hoa
+                    data_dict['psda'] = psda
+                    data_dict['pam'] = pam
+                    data_dict['eoi'] = eoi
+                    data_dict['sec'] = sec
+                    data_dict['wic'] = wic
+                    data_dict['coe'] = coe
+        
+        return data_dict
+
+    except Exception as ex:
+        print(ex, file=stderr)
+        QMessageBox.about(window, "Error!", "An unknown error has occurred!")
+
+
 def delete_sat(database_url, window, date_time):
     try:
         stmt = """
