@@ -10,7 +10,11 @@ from frame_switch.window_frame import set_window_frame
 import menu_frames.main_frame as mf
 
 
-def delete_file():
+def delete_file(window):
+    response = QMessageBox.question(window, 'PyQt5 message', "Do you want to save?", QMessageBox.Yes | QMessageBox.No)
+
+    if response == QMessageBox.No:
+        return
 
     file = str(QFileDialog.getOpenFileName()[0])
 
@@ -34,7 +38,7 @@ class DeleteFrame:
 
         button = QPushButton("Select File")
         
-        button.clicked.connect(delete_file)
+        button.clicked.connect(lambda: delete_file(window))
 
         home_button = QPushButton("Return Home")
         home_button.clicked.connect(lambda: mf.MainFrame.switch_to_main_menu(window))
