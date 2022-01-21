@@ -22,7 +22,6 @@ def delete_file(window):
     # ensures that the program crashes (incidentally
     # the converse is the opposite
     if file is not None and file != "":
-        print(file)
         os.remove(file)
 
 
