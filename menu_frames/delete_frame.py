@@ -11,7 +11,7 @@ import menu_frames.main_frame as mf
 
 
 def delete_file(window):
-    response = QMessageBox.question(window, 'PyQt5 message', "Do you want to save?", QMessageBox.Yes | QMessageBox.No)
+    response = QMessageBox.question(window, 'PyQt5 message', "Are you sure you want to delete?", QMessageBox.Yes | QMessageBox.No)
 
     if response == QMessageBox.No:
         return
