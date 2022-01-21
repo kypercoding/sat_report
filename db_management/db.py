@@ -132,7 +132,7 @@ def get_sat_data(database_url, window):
                 }
 
                 while row is not None:
-                    datetime = str(row[0])[:-7]
+                    datetime = str(row[0])
                     composite = int(row[1])
                     ebrw = int(row[2])
                     math = int(row[3])

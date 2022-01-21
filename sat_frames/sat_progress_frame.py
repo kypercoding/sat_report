@@ -29,7 +29,20 @@ class SATProgressFrame:
         toolbar = NavigationToolbar(canvas, window)
 
         self.plot(db_url, window, figure, canvas)
-   
+
+        # button for displaying composite data
+        composite_button = QPushButton('Composite')
+
+        # button for displaying evidence-based reading
+        # and writing data
+        ebrw_button = QPushButton("Evidence-Based Reading/Writing")
+
+        # button for display math score
+        math_button = QPushButton('Math')
+
+        # subscores button
+        hoa_button = QPushButton('Subscores')
+        
         # Just some button connected to 'plot' method
         button = QPushButton('Refresh')
            
@@ -61,16 +74,25 @@ class SATProgressFrame:
 
 
     def plot(self, db_url, window, figure, canvas):
+        # retrieves data from local database
         data = get_sat_data(db_url, window)
 
+        # if no data can be found, then do nothing
         if data == None:
             return
 
+        # retrieves date and times as x values
         dates = data['dates']
 
+        # retrieves composite scores
         composite = data['composite']
+
+        # retrieves math and evidence-based reading/writing scores
         ebrw = data['ebrw']
         math = data['math']
+
+        # retrieves subscores
+
 
         # clearing old figure
         figure.clear()
