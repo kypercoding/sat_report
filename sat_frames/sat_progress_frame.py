@@ -1,6 +1,6 @@
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QApplication, QFrame, QLabel, QLineEdit, QPushButton, QDateTimeEdit
-from PyQt5.QtWidgets import QMainWindow, QVBoxLayout
+from PyQt5.QtWidgets import QMainWindow, QVBoxLayout, QComboBox
 from PyQt5.QtCore import Qt
 
 import matplotlib.pyplot as plt
@@ -28,26 +28,29 @@ class SATProgressFrame:
         # it takes the Canvas widget and a parent
         toolbar = NavigationToolbar(canvas, window)
 
-        self.plot(db_url, window, figure, canvas)
+        # options for plots
+        options = {
+            "Composite": {"name": "composite", "limits": [100, 1700]},
+            "Evidenced-Based Reading/Writing": {"name": "ebrw", "limits": [100, 900]},
+            "Math": {"name": "math", "limits": [100, 900]},
+            "Heart of Algebra": {"name": "hoa", "limits": [0, 16]},
+            "Problem Solving and Data Analysis": {"name": "psda", "limits": [0, 16]},
+            "Passport to Advanced Math": {"name": "pam", "limits": [0, 16]},
+            "Expression of Ideas": {"name": "eoi", "limits": [0, 16]},
+            "Standard English Conventions": {"name": "sec", "limits": [0, 16]},
+            "Words in Context": {"name": "wic", "limits": [0, 16]},
+            "Command of Evidence": {"name": "coe", "limits": [0, 16]}
+        }
 
-        # button for displaying composite data
-        composite_button = QPushButton('Composite')
+        # list view for viewing plots
+        list_of_plots = QComboBox()
 
-        # button for displaying evidence-based reading
-        # and writing data
-        ebrw_button = QPushButton("Evidence-Based Reading/Writing")
+        # options for list widget
+        for option in options:
+            list_of_plots.addItem(option)
 
-        # button for display math score
-        math_button = QPushButton('Math')
-
-        # subscores button
-        hoa_button = QPushButton('Subscores')
-        
-        # Just some button connected to 'plot' method
-        button = QPushButton('Refresh')
-           
-        # adding action to the button
-        button.clicked.connect(lambda: self.plot(db_url, window, figure, canvas))
+        # list widget detecting change in plot
+        list_of_plots.textActivated.connect(lambda: self.plot(db_url, window, options, list_of_plots, figure, canvas))
 
         menu_button = QPushButton("Return to SAT Menu")
         menu_button.clicked.connect(lambda: sm.SATMainFrame.switch_to_sat_menu(window, db_url))
@@ -62,8 +65,10 @@ class SATProgressFrame:
         layout.addWidget(canvas)
         
         # adding push button to the layout
-        layout.addWidget(button)
+        layout.addWidget(list_of_plots)
         layout.addWidget(menu_button)
+
+        self.plot(db_url, window, options, list_of_plots, figure, canvas)
 
         self._frame = QFrame()
         self._frame.setLayout(layout)
@@ -73,26 +78,16 @@ class SATProgressFrame:
         return self._frame
 
 
-    def plot(self, db_url, window, figure, canvas):
-        # retrieves data from local database
-        data = get_sat_data(db_url, window)
+    def plot(self, db_url, window, options, list_view, figure, canvas):
+        data_dict = get_sat_data(db_url, window)
 
-        # if no data can be found, then do nothing
-        if data == None:
-            return
+        type = list_view.currentText()
 
-        # retrieves date and times as x values
-        dates = data['dates']
+        code = options[type]["name"]
+        limits = options[type]["limits"]
 
-        # retrieves composite scores
-        composite = data['composite']
-
-        # retrieves math and evidence-based reading/writing scores
-        ebrw = data['ebrw']
-        math = data['math']
-
-        # retrieves subscores
-
+        dates = data_dict['dates']
+        scores = data_dict[code]
 
         # clearing old figure
         figure.clear()
@@ -101,13 +96,11 @@ class SATProgressFrame:
         ax = figure.add_subplot(111)
    
         # plot data
-        ax.plot(dates, composite, '*:', label="Composite Score")
-        ax.plot(dates, ebrw, '*:', label = "EBRW Score")
-        ax.plot(dates, math, '*:', label = "Math Score")
+        ax.plot(dates, scores, '*:', label=type)
 
-        ax.set_title("Progress Report")
+        ax.set_title("{} Score Progress".format(type))
 
-        ax.set_ylim(top=1700, bottom=100)
+        ax.set_ylim(top=limits[1], bottom=limits[0])
 
         ax.tick_params(axis='x', rotation=90)
 
